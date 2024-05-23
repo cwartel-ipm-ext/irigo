@@ -44,14 +44,13 @@ function my_print(src) {
       });
     });
   });
-
-  
   if (typeof Kiosk !== "undefined") {
     Kiosk.Session.close({
       information:
         "Nouvelle session utilisateur / Démarrage du scénario de paiement",
     });
-    
+    let printingSources = Kiosk.DocumentPrinting.sourcesList;
+    Kiosk.DocumentPrinting.addEventListener("rawPdfPrint", onRawPdfPrint);
 
     fetch(src).then((response) => {
       response.blob().then((blob) => {
@@ -60,7 +59,6 @@ function my_print(src) {
           Kiosk.DocumentPrinting.printRawPdf({
             raw: base64.split(",")[1],
             
-            
           });
         });
       });
@@ -68,7 +66,17 @@ function my_print(src) {
 
     //});
 
-    
+    function onRawPdfPrint(e) {
+      console.log(e.data.dataType);
+      switch (e.data.dataType) {
+        case "RawPdfPrinted":
+          console.log("Document imprimé");
+          break;
+        case "RawPdfPrintError":
+          console.error(e.data.code + ": " + e.data.description);
+          break;
+      }
+    }
   } else if (window.print) {
     window.frames["pdf-embed"].print();
   }
@@ -98,20 +106,3 @@ function observeEmailInput() {
 
 observePrintButton();
 observeEmailInput();
-
-function onRawPdfPrint(e) {
-  console.log(e.data.dataType);
-  switch (e.data.dataType) {
-    case "RawPdfPrinted":
-      console.log("Document imprimé");
-      break;
-    case "RawPdfPrintError":
-      console.error(e.data.code + ": " + e.data.description);
-      break;
-  }
-}
-
-if (typeof Kiosk !== "undefined") {
-  let printingSources = Kiosk.DocumentPrinting.sourcesList;
-  Kiosk.DocumentPrinting.addEventListener("rawPdfPrint", onRawPdfPrint);
-}
