@@ -1,4 +1,6 @@
-var selfUrl = process.env["SELF_URL"] || "https://9gmvl4-8080.csb.app/";
+var selfUrl = process.env["SELF_URL"] || "https://8080--main--ced-ws--ced--ler9018hr1f30.pit-1.try.coder.app/";
+//var proxiedFQDN = "borne-irigo.dataccessor.com/";
+var proxiedFQDN = "borne.irigo.fr/";
 
 const cheerio = require("cheerio");
 const express = require("express");
@@ -41,7 +43,7 @@ app.use(
 app.use(
   "/",
   createProxyMiddleware({
-    target: "https://borne-irigo.dataccessor.com/",
+    target: "https://"+proxiedFQDN,
     changeOrigin: true,
     pathFilter: ["!/client/*", "!/pdf/*"],
     selfHandleResponse: true,
@@ -66,8 +68,8 @@ app.use(
             const response = document.html();
             //turn absolute links to relative ones
             return response
-              .replaceAll("https://borne-irigo.dataccessor.com/", selfUrl)
-              .replaceAll("http://borne-irigo.dataccessor.com/", selfUrl);
+              .replaceAll("https://"+proxiedFQDN, selfUrl)
+              .replaceAll("http://"+proxiedFQDN, selfUrl);
           }
 
           if (
@@ -76,8 +78,8 @@ app.use(
           ) {
             return responseBuffer
               .toString("utf8")
-              .replaceAll("https://borne-irigo.dataccessor.com/", selfUrl)
-              .replaceAll("http://borne-irigo.dataccessor.com/", selfUrl);
+              .replaceAll("https://"+proxiedFQDN, selfUrl)
+              .replaceAll("http://"+proxiedFQDN, selfUrl);
           }
           //leave other resource as is
           return responseBuffer;
